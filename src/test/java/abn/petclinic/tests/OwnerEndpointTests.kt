@@ -1,7 +1,5 @@
 package abn.petclinic.tests
 
-import abn.petclinic.testframework.dataclasses.OwnerForTests
-import abn.petclinic.testframework.dataclasses.PetForTests
 import abn.petclinic.testframework.pages.OwnerEndpointActions.addPetToOwner
 import abn.petclinic.testframework.pages.OwnerEndpointActions.createOwner
 import abn.petclinic.testframework.pages.OwnerEndpointActions.deleteOwner
@@ -10,15 +8,15 @@ import abn.petclinic.testframework.pages.OwnerEndpointActions.getAllOwnersList
 import abn.petclinic.testframework.pages.OwnerEndpointActions.getOwnerById
 import abn.petclinic.testframework.pages.OwnerEndpointActions.getOwnersList
 import abn.petclinic.testframework.pages.OwnerEndpointActions.updateOwner
-import abn.petclinic.testframework.testdata.datasources.OwnerEndpointTestData
+import abn.petclinic.testframework.testdata.datasources.OwnerTestData
+import abn.petclinic.testframework.testdata.datasources.PetTestData
 import abn.petclinic.testframework.testdata.enums.OwnerTestTemplates
-import abn.petclinic.testframework.testdata.enums.PetTestTemplates
+import abn.petclinic.testframework.testdata.providers.AdditionToOwnerTestDataProvider
 import abn.petclinic.testframework.testdata.providers.OwnersCreationTestDataProvider
 import abn.petclinic.testframework.testdata.providers.OwnersDeletionTestDataProvider
 import abn.petclinic.testframework.testdata.providers.OwnersModificationTestDataProvider
 import abn.petclinic.testframework.utils.extractOwnerId
 import abn.petclinic.testframework.utils.validate
-import com.fasterxml.jackson.core.type.TypeReference
 import io.restassured.RestAssured.*
 import io.restassured.http.ContentType
 import org.junit.jupiter.api.BeforeAll
@@ -43,13 +41,13 @@ class OwnerEndpointTests {
     @ParameterizedTest(name = "{1}")
     @ArgumentsSource(OwnersCreationTestDataProvider::class)
     @DisplayName("Owner creation test:")
-    fun createNewOwnerTest(testData: OwnerEndpointTestData, description: String ) {
+    fun createNewOwnerTest(testData: OwnerTestData, description: String ) {
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val response  = createOwner(newOwner,expectedCode)
         if (expectedCode == 201) {
             response.validate {
-                validateOwnerData(newOwner)
+                validateOwnerInfo(newOwner)
                 validateOwnerDoesNotHavePets()
             }
         }
@@ -100,7 +98,7 @@ class OwnerEndpointTests {
     @ParameterizedTest(name = "{1}")
     @ArgumentsSource(OwnersModificationTestDataProvider::class)
     @DisplayName("Owner update test:")
-    fun updateOwnerTest(testData: OwnerEndpointTestData, description: String ) {
+    fun updateOwnerTest(testData: OwnerTestData, description: String ) {
         val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
         val updatedOwner = testData.ownerData
         val expectedOwner =  testData.ownerData
@@ -113,7 +111,7 @@ class OwnerEndpointTests {
         if (expectedCode == 204) {
             response.validate{ validateEmptyBody()}
             getOwnerById(id,200).validate {
-                validateOwnerData(expectedOwner,true)
+                validateOwnerInfo(expectedOwner,true)
             }
         }
     }
@@ -218,7 +216,7 @@ class OwnerEndpointTests {
     @ParameterizedTest(name = "{1}")
     @ArgumentsSource(OwnersDeletionTestDataProvider::class)
     @DisplayName("Owner update test:")
-    fun ownerDeletionTest(testData: OwnerEndpointTestData, description: String){
+    fun ownerDeletionTest(testData: OwnerTestData, description: String){
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val creationResponse = createOwner(newOwner,expectedCode)
@@ -234,11 +232,10 @@ class OwnerEndpointTests {
     @ParameterizedTest(name = "{1}")
     @ArgumentsSource(OwnersDeletionTestDataProvider::class)
     @DisplayName("Owner update test:")
-    fun ownerGetByIdTest(testData: OwnerEndpointTestData, description: String){
+    fun ownerGetByIdTest(testData: OwnerTestData, description: String){
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val creationResponse = createOwner(newOwner,201)
-
         val id = newOwner.id ?: creationResponse.extractOwnerId()
 
         val response  = deleteOwner(id,expectedCode)
@@ -247,10 +244,24 @@ class OwnerEndpointTests {
         }
     }
 
-    @Test
-    @Disabled
-    fun addPetToOwnerTest(){
+    @ParameterizedTest(name = "{1}")
+    @ArgumentsSource(AdditionToOwnerTestDataProvider::class)
+    @DisplayName("Add pet to owner test:")
+    fun addPetToOwnerTest(testData: PetTestData, description: String){
+        val addedPet = testData.petData
+        val newOwner = OwnerTestTemplates.BASIC_OWNER.getOwner()
+        val expectedCode = testData.expectedResponseCode
 
+        val ownerCreationResponse = createOwner(newOwner,201)
+        val ownerId = ownerCreationResponse.extractOwnerId()
+        newOwner.id = ownerId
+
+        val response = addPetToOwner(ownerId,addedPet,expectedCode)
+
+        if (expectedCode == 201) {
+            val expectedPet = addedPet.copy(ownerId=ownerId)
+            response.validate {validatePetInfo(expectedPet,false,true)}
+        }
     }
 
 

@@ -106,22 +106,22 @@ class PetRestControllerTests {
     @Test
     @WithMockUser(roles = "OWNER_ADMIN")
     void testGetPetSuccess() throws Exception {
-        given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
-        this.mockMvc.perform(get("/api/pets/3")
+        BDDMockito.given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/pets/3")
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(3))
-            .andExpect(jsonPath("$.name").value("Rosy"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(3))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Rosy"));
     }
 
     @Test
     @WithMockUser(roles = "OWNER_ADMIN")
     void testGetPetNotFound() throws Exception {
-        given(petMapper.toPetDto(this.clinicService.findPetById(-1))).willReturn(null);
-        this.mockMvc.perform(get("/api/pets/999")
+        BDDMockito.given(petMapper.toPetDto(this.clinicService.findPetById(-1))).willReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/pets/999")
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -129,32 +129,32 @@ class PetRestControllerTests {
     void testGetAllPetsSuccess() throws Exception {
         final Collection<Pet> pets = petMapper.toPets(this.pets);
         System.err.println(pets);
-        when(this.clinicService.findAllPets()).thenReturn(pets);
+        Mockito.when(this.clinicService.findAllPets()).thenReturn(pets);
         //given(this.clinicService.findAllPets()).willReturn(petMapper.toPets(pets));
-        this.mockMvc.perform(get("/api/pets/")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/pets/")
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.[0].id").value(3))
-            .andExpect(jsonPath("$.[0].name").value("Rosy"))
-            .andExpect(jsonPath("$.[1].id").value(4))
-            .andExpect(jsonPath("$.[1].name").value("Jewel"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(3))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].name").value("Rosy"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].id").value(4))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].name").value("Jewel"));
     }
 
     @Test
     @WithMockUser(roles = "OWNER_ADMIN")
     void testGetAllPetsNotFound() throws Exception {
         pets.clear();
-        given(this.clinicService.findAllPets()).willReturn(petMapper.toPets(pets));
-        this.mockMvc.perform(get("/api/pets/")
+        BDDMockito.given(this.clinicService.findAllPets()).willReturn(petMapper.toPets(pets));
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/pets/")
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "OWNER_ADMIN")
     void testUpdatePetSuccess() throws Exception {
-        given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
+        BDDMockito.given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
         PetDto newPet = pets.get(0);
         newPet.setName("Rosy I");
         ObjectMapper mapper = new ObjectMapper();
@@ -163,17 +163,17 @@ class PetRestControllerTests {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         String newPetAsJSON = mapper.writeValueAsString(newPet);
-        this.mockMvc.perform(put("/api/pets/3")
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/pets/3")
                 .content(newPetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(content().contentType("application/json"))
-            .andExpect(status().isNoContent());
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        this.mockMvc.perform(get("/api/pets/3")
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/pets/3")
                 .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(3))
-            .andExpect(jsonPath("$.name").value("Rosy I"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(3))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Rosy I"));
 
     }
 
@@ -188,9 +188,9 @@ class PetRestControllerTests {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String newPetAsJSON = mapper.writeValueAsString(newPet);
 
-        this.mockMvc.perform(put("/api/pets/3")
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/pets/3")
                 .content(newPetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -200,10 +200,10 @@ class PetRestControllerTests {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newPetAsJSON = mapper.writeValueAsString(newPet);
-        given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
-        this.mockMvc.perform(delete("/api/pets/3")
+        BDDMockito.given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/pets/3")
                 .content(newPetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isNoContent());
+            .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -213,10 +213,10 @@ class PetRestControllerTests {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newPetAsJSON = mapper.writeValueAsString(newPet);
-        given(this.clinicService.findPetById(999)).willReturn(null);
-        this.mockMvc.perform(delete("/api/pets/999")
+        BDDMockito.given(this.clinicService.findPetById(999)).willReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/pets/999")
                 .content(newPetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -226,10 +226,10 @@ class PetRestControllerTests {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newPetAsJSON = mapper.writeValueAsString(newPet);
-        given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
-        this.mockMvc.perform(post("/api/pets")
+        BDDMockito.given(this.clinicService.findPetById(3)).willReturn(petMapper.toPet(pets.get(0)));
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/pets")
                 .content(newPetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk());
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -239,9 +239,9 @@ class PetRestControllerTests {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newPetAsJSON = mapper.writeValueAsString(newPet);
-        given(this.clinicService.findPetById(999)).willReturn(null);
-        this.mockMvc.perform(post("/api/pets")
+        BDDMockito.given(this.clinicService.findPetById(999)).willReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/pets")
                 .content(new String()).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isBadRequest());
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

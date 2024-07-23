@@ -7,7 +7,9 @@ data class PetForTests(
     val name: String,
     val birthDate: String,
     val type: PetTypeForTests?=null,
-    var id: Int?=null,
-    var ownerId: Int? = null,
+    var id: String? =null,
+    var ownerId: String? = null,
     var visits: List<VisitForTests>?=null
-)
+){
+    fun petBio()= this.copy(visits = null,id = null, type=null)
+}

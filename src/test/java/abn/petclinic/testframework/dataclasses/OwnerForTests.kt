@@ -11,4 +11,8 @@ data class OwnerForTests(
     val telephone: String,
     val pets: List<PetForTests>? = null,
     var id: String? =null
-)
+){
+    //val ownerBio by lazy {this.copy(pets = null,id = null)} - delegate. Does not work properly due to deserializer attempting to fill it immediately.
+
+    fun ownerInfo() = this.copy(pets = null,id = null)
+}

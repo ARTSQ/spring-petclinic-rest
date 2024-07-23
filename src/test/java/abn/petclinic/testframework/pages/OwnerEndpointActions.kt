@@ -126,7 +126,6 @@ object OwnerEndpointActions : OwnersActionsInterface {
 
     override fun addPetToOwner(ownerId: String, newPet: PetForTests, expectedResponseCode: Int): Response {
         val response =
-
             given()
             .contentType(ContentType.JSON)
             .pathParams("ownerId", ownerId)

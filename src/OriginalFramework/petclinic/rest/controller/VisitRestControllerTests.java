@@ -118,46 +118,46 @@ class VisitRestControllerTests {
     @Test
     @WithMockUser(roles="OWNER_ADMIN")
     void testGetVisitSuccess() throws Exception {
-    	given(this.clinicService.findVisitById(2)).willReturn(visits.get(0));
-        this.mockMvc.perform(get("/api/visits/2")
+    	BDDMockito.given(this.clinicService.findVisitById(2)).willReturn(visits.get(0));
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/visits/2")
         	.accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(2))
-            .andExpect(jsonPath("$.description").value("rabies shot"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("rabies shot"));
     }
 
     @Test
     @WithMockUser(roles="OWNER_ADMIN")
     void testGetVisitNotFound() throws Exception {
-        given(this.clinicService.findVisitById(999)).willReturn(null);
-        this.mockMvc.perform(get("/api/visits/999")
+        BDDMockito.given(this.clinicService.findVisitById(999)).willReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/visits/999")
         	.accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles="OWNER_ADMIN")
     void testGetAllVisitsSuccess() throws Exception {
-    	given(this.clinicService.findAllVisits()).willReturn(visits);
-        this.mockMvc.perform(get("/api/visits/")
+    	BDDMockito.given(this.clinicService.findAllVisits()).willReturn(visits);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/visits/")
         	.accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-        	.andExpect(jsonPath("$.[0].id").value(2))
-        	.andExpect(jsonPath("$.[0].description").value("rabies shot"))
-        	.andExpect(jsonPath("$.[1].id").value(3))
-        	.andExpect(jsonPath("$.[1].description").value("neutered"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+        	.andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(2))
+        	.andExpect(MockMvcResultMatchers.jsonPath("$.[0].description").value("rabies shot"))
+        	.andExpect(MockMvcResultMatchers.jsonPath("$.[1].id").value(3))
+        	.andExpect(MockMvcResultMatchers.jsonPath("$.[1].description").value("neutered"));
     }
 
     @Test
     @WithMockUser(roles="OWNER_ADMIN")
     void testGetAllVisitsNotFound() throws Exception {
     	visits.clear();
-    	given(this.clinicService.findAllVisits()).willReturn(visits);
-        this.mockMvc.perform(get("/api/visits/")
+    	BDDMockito.given(this.clinicService.findAllVisits()).willReturn(visits);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/visits/")
         	.accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -170,9 +170,9 @@ class VisitRestControllerTests {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String newVisitAsJSON = mapper.writeValueAsString(visitMapper.toVisitDto(newVisit));
     	System.out.println("newVisitAsJSON " + newVisitAsJSON);
-    	this.mockMvc.perform(post("/api/visits/")
+    	this.mockMvc.perform(MockMvcRequestBuilders.post("/api/visits/")
     		.content(newVisitAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-    		.andExpect(status().isCreated());
+    		.andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
@@ -184,32 +184,32 @@ class VisitRestControllerTests {
     	ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newVisitAsJSON = mapper.writeValueAsString(visitMapper.toVisitDto(newVisit));
-    	this.mockMvc.perform(post("/api/visits/")
+    	this.mockMvc.perform(MockMvcRequestBuilders.post("/api/visits/")
         		.content(newVisitAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        		.andExpect(status().isBadRequest());
+        		.andExpect(MockMvcResultMatchers.status().isBadRequest());
      }
 
     @Test
     @WithMockUser(roles="OWNER_ADMIN")
     void testUpdateVisitSuccess() throws Exception {
-    	given(this.clinicService.findVisitById(2)).willReturn(visits.get(0));
+    	BDDMockito.given(this.clinicService.findVisitById(2)).willReturn(visits.get(0));
     	Visit newVisit = visits.get(0);
     	newVisit.setDescription("rabies shot test");
     	ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String newVisitAsJSON = mapper.writeValueAsString(visitMapper.toVisitDto(newVisit));
-    	this.mockMvc.perform(put("/api/visits/2")
+    	this.mockMvc.perform(MockMvcRequestBuilders.put("/api/visits/2")
     		.content(newVisitAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(content().contentType("application/json"))
-        	.andExpect(status().isNoContent());
+        	.andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+        	.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-    	this.mockMvc.perform(get("/api/visits/2")
+    	this.mockMvc.perform(MockMvcRequestBuilders.get("/api/visits/2")
            	.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(2))
-            .andExpect(jsonPath("$.description").value("rabies shot test"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("rabies shot test"));
     }
 
     @Test
@@ -220,9 +220,9 @@ class VisitRestControllerTests {
     	ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newVisitAsJSON = mapper.writeValueAsString(visitMapper.toVisitDto(newVisit));
-    	this.mockMvc.perform(put("/api/visits/2")
+    	this.mockMvc.perform(MockMvcRequestBuilders.put("/api/visits/2")
     		.content(newVisitAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(status().isBadRequest());
+        	.andExpect(MockMvcResultMatchers.status().isBadRequest());
      }
 
     @Test
@@ -232,10 +232,10 @@ class VisitRestControllerTests {
     	ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newVisitAsJSON = mapper.writeValueAsString(visitMapper.toVisitDto(newVisit));
-    	given(this.clinicService.findVisitById(2)).willReturn(visits.get(0));
-    	this.mockMvc.perform(delete("/api/visits/2")
+    	BDDMockito.given(this.clinicService.findVisitById(2)).willReturn(visits.get(0));
+    	this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/visits/2")
     		.content(newVisitAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(status().isNoContent());
+        	.andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -245,10 +245,10 @@ class VisitRestControllerTests {
     	ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String newVisitAsJSON = mapper.writeValueAsString(visitMapper.toVisitDto(newVisit));
-        given(this.clinicService.findVisitById(999)).willReturn(null);
-        this.mockMvc.perform(delete("/api/visits/999")
+        BDDMockito.given(this.clinicService.findVisitById(999)).willReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/visits/999")
     		.content(newVisitAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(status().isNotFound());
+        	.andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 }

@@ -27,7 +27,7 @@ fun <T> Response.deserializeBody(valueType: TypeReference<List<T>>): List<T> {
     return objectMapper.readValue(this.body().asString(), valueType)
 }
 
-fun generateRandomPetTypeName(): String {
+fun generateRandomName(): String {
     val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
     return (1..8)
         .map { characters.random() }

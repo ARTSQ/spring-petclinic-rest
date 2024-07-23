@@ -29,7 +29,7 @@ public abstract class AbstractUserServiceTests {
         user.addRole("OWNER_ADMIN");
 
         userService.saveUser(user);
-        assertThat(user.getRoles().parallelStream().allMatch(role -> role.getName().startsWith("ROLE_")), is(true));
-        assertThat(user.getRoles().parallelStream().allMatch(role -> role.getUser() != null), is(true));
+        MatcherAssert.assertThat(user.getRoles().parallelStream().allMatch(role -> role.getName().startsWith("ROLE_")), CoreMatchers.is(true));
+        MatcherAssert.assertThat(user.getRoles().parallelStream().allMatch(role -> role.getUser() != null), CoreMatchers.is(true));
     }
 }

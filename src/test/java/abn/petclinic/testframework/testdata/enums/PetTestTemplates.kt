@@ -1,6 +1,5 @@
 package abn.petclinic.testframework.testdata.enums
 
-import abn.petclinic.testframework.dataclasses.OwnerForTests
 import abn.petclinic.testframework.dataclasses.PetForTests
 import abn.petclinic.testframework.testdata.enums.PetTypesTestTemplates.*
 

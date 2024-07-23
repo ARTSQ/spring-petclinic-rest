@@ -95,46 +95,46 @@ class VetRestControllerTests {
     @Test
     @WithMockUser(roles="VET_ADMIN")
     void testGetVetSuccess() throws Exception {
-    	given(this.clinicService.findVetById(1)).willReturn(vets.get(0));
-        this.mockMvc.perform(get("/api/vets/1")
+    	BDDMockito.given(this.clinicService.findVetById(1)).willReturn(vets.get(0));
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/vets/1")
         	.accept(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.firstName").value("James"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("James"));
     }
 
     @Test
     @WithMockUser(roles="VET_ADMIN")
     void testGetVetNotFound() throws Exception {
-    	given(this.clinicService.findVetById(-1)).willReturn(null);
-        this.mockMvc.perform(get("/api/vets/999")
+    	BDDMockito.given(this.clinicService.findVetById(-1)).willReturn(null);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/vets/999")
         	.accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles="VET_ADMIN")
     void testGetAllVetsSuccess() throws Exception {
-    	given(this.clinicService.findAllVets()).willReturn(vets);
-        this.mockMvc.perform(get("/api/vets/")
+    	BDDMockito.given(this.clinicService.findAllVets()).willReturn(vets);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/vets/")
         	.accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.[0].id").value(1))
-            .andExpect(jsonPath("$.[0].firstName").value("James"))
-            .andExpect(jsonPath("$.[1].id").value(2))
-            .andExpect(jsonPath("$.[1].firstName").value("Helen"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].firstName").value("James"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].firstName").value("Helen"));
     }
 
     @Test
     @WithMockUser(roles="VET_ADMIN")
     void testGetAllVetsNotFound() throws Exception {
     	vets.clear();
-    	given(this.clinicService.findAllVets()).willReturn(vets);
-        this.mockMvc.perform(get("/api/vets/")
+    	BDDMockito.given(this.clinicService.findAllVets()).willReturn(vets);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/vets/")
         	.accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
@@ -144,9 +144,9 @@ class VetRestControllerTests {
     	newVet.setId(999);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	this.mockMvc.perform(post("/api/vets/")
+    	this.mockMvc.perform(MockMvcRequestBuilders.post("/api/vets/")
     		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-    		.andExpect(status().isCreated());
+    		.andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
@@ -157,30 +157,30 @@ class VetRestControllerTests {
     	newVet.setFirstName(null);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	this.mockMvc.perform(post("/api/vets/")
+    	this.mockMvc.perform(MockMvcRequestBuilders.post("/api/vets/")
         		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        		.andExpect(status().isBadRequest());
+        		.andExpect(MockMvcResultMatchers.status().isBadRequest());
      }
 
     @Test
     @WithMockUser(roles="VET_ADMIN")
     void testUpdateVetSuccess() throws Exception {
-    	given(this.clinicService.findVetById(1)).willReturn(vets.get(0));
+    	BDDMockito.given(this.clinicService.findVetById(1)).willReturn(vets.get(0));
     	Vet newVet = vets.get(0);
     	newVet.setFirstName("James");
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	this.mockMvc.perform(put("/api/vets/1")
+    	this.mockMvc.perform(MockMvcRequestBuilders.put("/api/vets/1")
     		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(content().contentType("application/json"))
-        	.andExpect(status().isNoContent());
+        	.andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+        	.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-    	this.mockMvc.perform(get("/api/vets/1")
+    	this.mockMvc.perform(MockMvcRequestBuilders.get("/api/vets/1")
            	.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.firstName").value("James"));
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("James"));
 
     }
 
@@ -191,9 +191,9 @@ class VetRestControllerTests {
     	newVet.setFirstName(null);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	this.mockMvc.perform(put("/api/vets/1")
+    	this.mockMvc.perform(MockMvcRequestBuilders.put("/api/vets/1")
     		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(status().isBadRequest());
+        	.andExpect(MockMvcResultMatchers.status().isBadRequest());
      }
 
     @Test
@@ -202,10 +202,10 @@ class VetRestControllerTests {
     	Vet newVet = vets.get(0);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	given(this.clinicService.findVetById(1)).willReturn(vets.get(0));
-    	this.mockMvc.perform(delete("/api/vets/1")
+    	BDDMockito.given(this.clinicService.findVetById(1)).willReturn(vets.get(0));
+    	this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/vets/1")
     		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(status().isNoContent());
+        	.andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -214,10 +214,10 @@ class VetRestControllerTests {
     	Vet newVet = vets.get(0);
     	ObjectMapper mapper = new ObjectMapper();
         String newVetAsJSON = mapper.writeValueAsString(vetMapper.toVetDto(newVet));
-    	given(this.clinicService.findVetById(-1)).willReturn(null);
-    	this.mockMvc.perform(delete("/api/vets/999")
+    	BDDMockito.given(this.clinicService.findVetById(-1)).willReturn(null);
+    	this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/vets/999")
     		.content(newVetAsJSON).accept(MediaType.APPLICATION_JSON_VALUE).contentType(MediaType.APPLICATION_JSON_VALUE))
-        	.andExpect(status().isNotFound());
+        	.andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 }

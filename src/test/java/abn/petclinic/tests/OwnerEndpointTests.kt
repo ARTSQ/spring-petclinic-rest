@@ -1,0 +1,261 @@
+package abn.petclinic.tests
+
+import abn.petclinic.testframework.dataclasses.OwnerForTests
+import abn.petclinic.testframework.dataclasses.PetForTests
+import abn.petclinic.testframework.pages.OwnerEndpointActions.addPetToOwner
+import abn.petclinic.testframework.pages.OwnerEndpointActions.createOwner
+import abn.petclinic.testframework.pages.OwnerEndpointActions.deleteOwner
+import abn.petclinic.testframework.pages.OwnerEndpointActions.endpointName
+import abn.petclinic.testframework.pages.OwnerEndpointActions.getAllOwnersList
+import abn.petclinic.testframework.pages.OwnerEndpointActions.getOwnerById
+import abn.petclinic.testframework.pages.OwnerEndpointActions.getOwnersList
+import abn.petclinic.testframework.pages.OwnerEndpointActions.updateOwner
+import abn.petclinic.testframework.testdata.datasources.OwnerEndpointTestData
+import abn.petclinic.testframework.testdata.enums.OwnerTestTemplates
+import abn.petclinic.testframework.testdata.enums.PetTestTemplates
+import abn.petclinic.testframework.testdata.providers.OwnersCreationTestDataProvider
+import abn.petclinic.testframework.testdata.providers.OwnersDeletionTestDataProvider
+import abn.petclinic.testframework.testdata.providers.OwnersModificationTestDataProvider
+import abn.petclinic.testframework.utils.extractOwnerId
+import abn.petclinic.testframework.utils.validate
+import com.fasterxml.jackson.core.type.TypeReference
+import io.restassured.RestAssured.*
+import io.restassured.http.ContentType
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ArgumentsSource
+import kotlin.test.assertEquals
+
+class OwnerEndpointTests {
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll(): Unit {
+            baseURI = "http://localhost:9966";
+            basePath = "/petclinic/api";
+        }
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @ArgumentsSource(OwnersCreationTestDataProvider::class)
+    @DisplayName("Owner creation test:")
+    fun createNewOwnerTest(testData: OwnerEndpointTestData, description: String ) {
+        val newOwner = testData.ownerData
+        val expectedCode = testData.expectedResponseCode
+        val response  = createOwner(newOwner,expectedCode)
+        if (expectedCode == 201) {
+            response.validate {
+                validateOwnerData(newOwner)
+                validateOwnerDoesNotHavePets()
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Owner creation test: malformed JSON")
+    fun createNewOwnerMalformedTest() {
+        val response = given()
+            .contentType(ContentType.JSON)
+            .body("""
+                {
+                  "firstName": "George",
+                  "lastName": "Franklin",
+                  "address": "110 W. Liberty St.",
+                  "city": "Madison",
+                  "telephone": "6085551023"
+                """.trimIndent())
+            .`when`()
+            .post("/$endpointName")
+            .then()
+            .extract()
+            .response()
+        assertEquals(400, response.statusCode)
+    }
+
+    @Test
+    @DisplayName("Owner creation test: absent field")
+    fun createNewOwnerAbsentFieldTest() {
+        val response = given()
+            .contentType(ContentType.JSON)
+            .body("""
+                {
+                  "firstName": "George",
+                  "address": "110 W. Liberty St.",
+                  "city": "Madison",
+                  "telephone": "6085551023"
+                  }
+                """.trimIndent())
+            .`when`()
+            .post("/$endpointName")
+            .then()
+            .extract()
+            .response()
+        assertEquals(400, response.statusCode)
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @ArgumentsSource(OwnersModificationTestDataProvider::class)
+    @DisplayName("Owner update test:")
+    fun updateOwnerTest(testData: OwnerEndpointTestData, description: String ) {
+        val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
+        val updatedOwner = testData.ownerData
+        val expectedOwner =  testData.ownerData
+        val expectedCode = testData.expectedResponseCode
+        val responseInitial = createOwner(originalOwnerData,201)
+        val id = responseInitial.extractOwnerId()
+        expectedOwner.id = id
+
+        val response = updateOwner(id,updatedOwner,expectedCode)
+        if (expectedCode == 204) {
+            response.validate{ validateEmptyBody()}
+            getOwnerById(id,200).validate {
+                validateOwnerData(expectedOwner,true)
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Owner update: malformed JSON")
+    fun updateOwnerMalformedTest() {
+        val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
+        val responseInitial = createOwner(originalOwnerData,201)
+        val id = responseInitial.extractOwnerId()
+        val response = given()
+            .pathParams("ownerId",id)
+            .contentType(ContentType.JSON)
+            .body("""
+                {
+                  "firstName": "George",
+                  "lastName": "Franklin",
+                  address: 110 W. Liberty St.,
+                  "city": "Madison",
+                  "telephone": "6085551023"
+                  }
+                """.trimIndent())
+            .`when`()
+            .put("/$endpointName/{ownerId}")
+            .then()
+            .extract()
+            .response()
+        assertEquals(400, response.statusCode)
+    }
+
+    @Test
+    @DisplayName("Owner update: absent field")
+    fun updateOwnerAbsentFieldTest() {
+        val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
+        val responseInitial = createOwner(originalOwnerData,201)
+        val id = responseInitial.extractOwnerId()
+
+        val response = given()
+            .pathParams("ownerId",id)
+            .contentType(ContentType.JSON)
+            .body("""
+                {
+                  "firstName": "George",
+                  "address": "110 W. Liberty St.",
+                  "city": "Madison",
+                  "telephone": "6085551023"
+                  }
+                """.trimIndent())
+            .`when`()
+            .post("/$endpointName/{ownerId}")
+            .then()
+            .extract()
+            .response()
+        assertEquals(400, response.statusCode)
+    }
+
+    @Test
+    @DisplayName("Get full owners list")
+    fun getOwnersListTest() {
+        val newOwner = OwnerTestTemplates.BASIC_OWNER2.getOwner()
+        val responseInitial = createOwner(newOwner,201)
+        createOwner(OwnerTestTemplates.BASIC_OWNER.getOwner(),201)
+        newOwner.id = responseInitial.extractOwnerId()
+
+        val ownersList = getAllOwnersList(200)
+        ownersList.validate { validateBodyContainsOwnerWithIdInList(newOwner)
+            validateOwnersListSize(2,true)
+        }
+    }
+
+    @Test
+    @DisplayName("Get full owners list when no owners registered")
+    @Disabled("This test is disabled: deeper framework integration required")
+    fun getFullOwnersListTestUponEmpty() {
+        //TODO: requires direct test database manipulation
+    }
+
+    @Test
+    @DisplayName("Get owners list by last name")
+    fun getOwnersListByLastNameTest() {
+        val newOwner1 = OwnerTestTemplates.BASIC_OWNER.getOwner()
+        val newOwner2 = OwnerTestTemplates.BASIC_OWNER2.getOwner()
+        val response1 = createOwner(newOwner1,201)
+        val response2 = createOwner(newOwner2,201)
+        newOwner1.id = response1.extractOwnerId()
+        newOwner2.id = response2.extractOwnerId()
+
+        val ownersList = getOwnersList(newOwner1.lastName,200)
+        ownersList.validate {
+            validateBodyContainsOwnerWithIdInList(newOwner1)
+            validateListDoesNotContainsOwner(newOwner2)
+        }
+    }
+
+    @Test
+    @DisplayName("Get full owners list: last name not existing")
+    fun getOwnersListByLastNameNegativeTest(){
+        createOwner(OwnerTestTemplates.BASIC_OWNER.getOwner(),201)
+        getOwnersList("DefinitelyNotExisting",404)
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @ArgumentsSource(OwnersDeletionTestDataProvider::class)
+    @DisplayName("Owner update test:")
+    fun ownerDeletionTest(testData: OwnerEndpointTestData, description: String){
+        val newOwner = testData.ownerData
+        val expectedCode = testData.expectedResponseCode
+        val creationResponse = createOwner(newOwner,expectedCode)
+
+        val id = newOwner.id ?: creationResponse.extractOwnerId()
+
+        val response  = deleteOwner(id,expectedCode)
+        if (expectedCode == 204) {
+            response.validate {validateEmptyBody()}
+        }
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @ArgumentsSource(OwnersDeletionTestDataProvider::class)
+    @DisplayName("Owner update test:")
+    fun ownerGetByIdTest(testData: OwnerEndpointTestData, description: String){
+        val newOwner = testData.ownerData
+        val expectedCode = testData.expectedResponseCode
+        val creationResponse = createOwner(newOwner,201)
+
+        val id = newOwner.id ?: creationResponse.extractOwnerId()
+
+        val response  = deleteOwner(id,expectedCode)
+        if (expectedCode == 204) {
+            response.validate {validateEmptyBody()}
+        }
+    }
+
+    @Test
+    @Disabled
+    fun addPetToOwnerTest(){
+
+    }
+
+
+
+
+
+
+}

@@ -28,6 +28,11 @@ enum class PetTestTemplates(private val pet: PetForTests, val description: Strin
         birthDate = "",
         type = EXISTING_PET_TYPE.getPetType()
     ),"Pet with empty birthdate"),
+    PET_WITH_TOO_LONG_NAME(PetForTests(
+        name = "a".repeat(31),
+        birthDate = "2021-07-22",
+        type = EXISTING_PET_TYPE.getPetType()
+    ),"Pet with too long name"),
     PET_WITH_BIRTH_DATE_WRONG_FORMAT(PetForTests(
         name ="Doody",
         birthDate = "22.07.2019",

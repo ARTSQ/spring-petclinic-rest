@@ -44,12 +44,12 @@ enum class OwnerTestTemplates(private val owner: OwnerForTests, val description:
     ),"Owner with provided id"),
     OWNER_WITH_FAULTY_ID(OwnerForTests(
         firstName = "Bob",
-        lastName = "Builder",
+        lastName = "Constructor",
         address = "9 Construction Rd",
         city = "BuilderTown",
         telephone = "101202303",
         id = "ABC"
-    ),"Owner with provided id"),
+    ),"Owner with faulty id"),
     OWNER_WITH_EMPTY_FIRST_NAME(OwnerForTests(
         firstName = "",
         lastName = "Carpenter",
@@ -67,7 +67,7 @@ enum class OwnerTestTemplates(private val owner: OwnerForTests, val description:
 
     OWNER_WITH_EMPTY_ADDRESS(OwnerForTests(
         firstName = "Jane",
-        lastName = "Builder",
+        lastName = "Smithings",
         address = "",
         city = "BuilderTown",
         telephone = "12202305"
@@ -89,17 +89,49 @@ enum class OwnerTestTemplates(private val owner: OwnerForTests, val description:
         telephone = ""
     ), "Owner with empty telephone"),
 
-    OWNER_WITH_TOO_LONG_NAME(OwnerForTests(
-        firstName = "cdFHARSbLSwRwFyvvmHHVKTizXnHHGNCDcqVXmCBudGKjSGjwZbaALcHQShzCnmJruUrLTgWEgLmnVgvAMBJENSyvtzeLmUCEdtUUuWmEffQpvXBekFfQZRcxxSWUbZEMUbBvJfNjjYTWwfNvrfYvmZGGWWcZydCRggzCMrzMWQPVgyeLJDkDcBWHRDSKuanZvYxMDXfjfJPHLuXWYmDSSnAdBeBERbxMvrkMUaTHKSuQKfrChppzvqkkyMMiAyzRCRjPZEUDPmVicKmyitfThnmViYNPbtZSEMFCyXRqYiKXynMmPFKeWYKQPHCyLcupLMWYwdbhKZVhYmyvaDTydiGRadGfudiUCUhtFaReVYvxhtQZyhnmebwEXTdXuxNPCLJiXCtaguXwjghmvZEdpuedawwkdHFLphZEnaidiVfEXNALSFNtqECkaGNNevEqcJnzudCxGGUYYdrWEivwZMJSzRTcXXZuCnYujyuRnLECzuAETCp",
+    OWNER_WITH_TOO_LONG_FIRST_NAME(OwnerForTests(
+        firstName = "a".repeat(31), // Exceeds max length of 30
         lastName = "Wooden",
         address = "Somewhere over the rainbow",
         city = "Oz",
-        telephone = "3990290"),"Owner with too long name"
-    ),
+        telephone = "3990290"
+    ), "Owner with too long first name"),
+
+    OWNER_WITH_TOO_LONG_LAST_NAME(OwnerForTests(
+        firstName = "John",
+        lastName = "b".repeat(31), // Exceeds max length of 30
+        address = "Somewhere over the rainbow",
+        city = "Oz",
+        telephone = "3990290"
+    ), "Owner with too long last name"),
+
+    OWNER_WITH_TOO_LONG_ADDRESS(OwnerForTests(
+        firstName = "John",
+        lastName = "Oak",
+        address = "c".repeat(256), // Exceeds max length of 255
+        city = "Oz",
+        telephone = "3990290"
+    ), "Owner with too long address"),
+
+    OWNER_WITH_TOO_LONG_CITY(OwnerForTests(
+        firstName = "John",
+        lastName = "Pinetree",
+        address = "Somewhere over the rainbow",
+        city = "d".repeat(61), // Exceeds max length of 60
+        telephone = "3990290"
+    ), "Owner with too long city"),
+
+    OWNER_WITH_TOO_LONG_TELEPHONE(OwnerForTests(
+        firstName = "John",
+        lastName = "Silverback",
+        address = "Somewhere over the rainbow",
+        city = "Oz",
+        telephone = "e".repeat(21) // Exceeds max length of 20
+    ), "Owner with too long telephone"),
 
     OWNER_WITH_INCORRECT_PHONE_NUMBER(OwnerForTests(
         firstName = "John",
-        lastName = "Doe",
+        lastName = "Dover",
         address = "Somewhere over the rainbow",
         city = "Somewhere over the rainbow",
         telephone = "13-2023-06"

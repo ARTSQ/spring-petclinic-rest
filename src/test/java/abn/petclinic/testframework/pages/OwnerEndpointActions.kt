@@ -107,6 +107,7 @@ object OwnerEndpointActions : OwnersActionsInterface {
     override fun deleteOwner(ownerId: String, expectedResponseCode: Int): Response {
         val response = given()
             .pathParams("ownerId", ownerId)
+            .log().all()
             .`when`()
             .delete("/$endpointName/{ownerId}")
             .then()

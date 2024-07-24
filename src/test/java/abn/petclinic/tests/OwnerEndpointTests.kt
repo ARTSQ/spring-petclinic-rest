@@ -11,10 +11,8 @@ import abn.petclinic.testframework.pages.OwnerEndpointActions.updateOwner
 import abn.petclinic.testframework.testdata.datasources.OwnerTestData
 import abn.petclinic.testframework.testdata.datasources.PetTestData
 import abn.petclinic.testframework.testdata.enums.OwnerTestTemplates
-import abn.petclinic.testframework.testdata.providers.AdditionToOwnerTestDataProvider
-import abn.petclinic.testframework.testdata.providers.OwnersCreationTestDataProvider
-import abn.petclinic.testframework.testdata.providers.OwnersDeletionTestDataProvider
-import abn.petclinic.testframework.testdata.providers.OwnersModificationTestDataProvider
+import abn.petclinic.testframework.testdata.providers.*
+import abn.petclinic.testframework.utils.allureStep
 import abn.petclinic.testframework.utils.extractOwnerId
 import abn.petclinic.testframework.utils.validate
 import io.restassured.RestAssured.*
@@ -29,10 +27,12 @@ import kotlin.test.assertEquals
 
 class OwnerEndpointTests {
 
+
     companion object {
         @JvmStatic
         @BeforeAll
         fun beforeAll(): Unit {
+            //TODO: switch to config properties instead of hardcode url/port
             baseURI = "http://localhost:9966";
             basePath = "/petclinic/api";
         }
@@ -51,27 +51,36 @@ class OwnerEndpointTests {
                 validateOwnerDoesNotHavePets()
             }
         }
+        if (expectedCode == 400){
+            getAllOwnersList(200).validate {
+                validateListDoesNotContainsOwner(newOwner)
+            }
+        }
     }
 
     @Test
     @DisplayName("Owner creation test: malformed JSON")
     fun createNewOwnerMalformedTest() {
-        val response = given()
-            .contentType(ContentType.JSON)
-            .body("""
+        allureStep("First Step") {
+            val response = given()
+                .contentType(ContentType.JSON)
+                .body(
+                    """
                 {
                   "firstName": "George",
                   "lastName": "Franklin",
                   "address": "110 W. Liberty St.",
                   "city": "Madison",
                   "telephone": "6085551023"
-                """.trimIndent())
-            .`when`()
-            .post("/$endpointName")
-            .then()
-            .extract()
-            .response()
-        assertEquals(400, response.statusCode)
+                """.trimIndent()
+                )
+                .`when`()
+                .post("/$endpointName")
+                .then()
+                .extract()
+                .response()
+            assertEquals(400, response.statusCode)
+        }
     }
 
     @Test
@@ -112,6 +121,12 @@ class OwnerEndpointTests {
             response.validate{ validateEmptyBody()}
             getOwnerById(id,200).validate {
                 validateOwnerInfo(expectedOwner,true)
+            }
+        }
+        if (expectedCode == 400){
+            originalOwnerData.id = id
+            getOwnerById(id,200).validate {
+                validateOwnerInfo(originalOwnerData,true)
             }
         }
     }
@@ -219,7 +234,7 @@ class OwnerEndpointTests {
     fun ownerDeletionTest(testData: OwnerTestData, description: String){
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
-        val creationResponse = createOwner(newOwner,expectedCode)
+        val creationResponse = createOwner(newOwner,201)
 
         val id = newOwner.id ?: creationResponse.extractOwnerId()
 
@@ -230,17 +245,18 @@ class OwnerEndpointTests {
     }
 
     @ParameterizedTest(name = "{1}")
-    @ArgumentsSource(OwnersDeletionTestDataProvider::class)
-    @DisplayName("Owner update test:")
+    @ArgumentsSource(OwnerGetByIdTestDataProvider::class)
+    @DisplayName("Owner deletion test:")
     fun ownerGetByIdTest(testData: OwnerTestData, description: String){
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val creationResponse = createOwner(newOwner,201)
         val id = newOwner.id ?: creationResponse.extractOwnerId()
 
-        val response  = deleteOwner(id,expectedCode)
-        if (expectedCode == 204) {
-            response.validate {validateEmptyBody()}
+        val response  = getOwnerById(id,expectedCode)
+        if (expectedCode == 200) {
+            val expectedOwner = newOwner.copy(id = id)
+            response.validate {validateOwnerInfo(expectedOwner,true)}
         }
     }
 

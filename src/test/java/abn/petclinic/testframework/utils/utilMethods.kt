@@ -3,6 +3,7 @@ import abn.petclinic.testframework.dataclasses.OwnerForTests
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.qameta.allure.Allure
 import io.restassured.response.Response
 import kotlin.test.assertNotNull
 
@@ -32,4 +33,11 @@ fun generateRandomName(): String {
     return (1..8)
         .map { characters.random() }
         .joinToString("")
+}
+
+fun allureStep(name: String, action: () -> Unit = {}) {
+    Allure.step(name, Allure.ThrowableContextRunnable<Void, Allure.StepContext> { context ->
+        action()
+        null
+    })
 }

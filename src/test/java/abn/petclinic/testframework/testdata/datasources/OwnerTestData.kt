@@ -23,7 +23,11 @@ val ownerCreationTestData = listOf(
     OwnerTestData(OWNER_WITH_EMPTY_ADDRESS.getOwner(), 400, OWNER_WITH_EMPTY_ADDRESS.description),
     OwnerTestData(OWNER_WITH_EMPTY_CITY.getOwner(), 400, OWNER_WITH_EMPTY_CITY.description),
     OwnerTestData(OWNER_WITH_EMPTY_TELEPHONE.getOwner(), 400, OWNER_WITH_EMPTY_TELEPHONE.description),
-    OwnerTestData(OWNER_WITH_TOO_LONG_NAME.getOwner(),400, OWNER_WITH_TOO_LONG_NAME.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_FIRST_NAME.getOwner(),400, OWNER_WITH_TOO_LONG_FIRST_NAME.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_LAST_NAME.getOwner(), 400, OWNER_WITH_TOO_LONG_LAST_NAME.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_ADDRESS.getOwner(), 400, OWNER_WITH_TOO_LONG_ADDRESS.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_CITY.getOwner(), 400, OWNER_WITH_TOO_LONG_CITY.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_TELEPHONE.getOwner(), 400, OWNER_WITH_TOO_LONG_TELEPHONE.description),
     OwnerTestData(OWNER_WITH_INCORRECT_PHONE_NUMBER.getOwner(),400, OWNER_WITH_INCORRECT_PHONE_NUMBER.description),
 )
 
@@ -37,15 +41,19 @@ val ownerModificationTestData = listOf(
     OwnerTestData(OWNER_WITH_EMPTY_ADDRESS.getOwner(), 400, OWNER_WITH_EMPTY_ADDRESS.description),
     OwnerTestData(OWNER_WITH_EMPTY_CITY.getOwner(), 400, OWNER_WITH_EMPTY_CITY.description),
     OwnerTestData(OWNER_WITH_EMPTY_TELEPHONE.getOwner(), 400, OWNER_WITH_EMPTY_TELEPHONE.description),
-    OwnerTestData(OWNER_WITH_TOO_LONG_NAME.getOwner(),400, OWNER_WITH_TOO_LONG_NAME.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_FIRST_NAME.getOwner(),400, OWNER_WITH_TOO_LONG_FIRST_NAME.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_LAST_NAME.getOwner(), 400, OWNER_WITH_TOO_LONG_LAST_NAME.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_ADDRESS.getOwner(), 400, OWNER_WITH_TOO_LONG_ADDRESS.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_CITY.getOwner(), 400, OWNER_WITH_TOO_LONG_CITY.description),
+    OwnerTestData(OWNER_WITH_TOO_LONG_TELEPHONE.getOwner(), 400, OWNER_WITH_TOO_LONG_TELEPHONE.description),
     OwnerTestData(OWNER_WITH_INCORRECT_PHONE_NUMBER.getOwner(),400, OWNER_WITH_INCORRECT_PHONE_NUMBER.description),
-    OwnerTestData(OWNER_WITH_FAULTY_ID.getOwner(),404, OWNER_WITH_FAULTY_ID.description),
+    OwnerTestData(OWNER_WITH_FAULTY_ID.getOwner(),204, OWNER_WITH_FAULTY_ID.description),
 )
 
 val ownerDeletionTestData = listOf(
     OwnerTestData(BASIC_OWNER.getOwner(),204, BASIC_OWNER.description),
-    OwnerTestData(OWNER_WITH_ID.getOwner(), 204, OWNER_WITH_ID.description),
-    OwnerTestData(OWNER_WITH_FAULTY_ID.getOwner(),404, OWNER_WITH_FAULTY_ID.description)
+    OwnerTestData(OWNER_WITH_ID.getOwner(), 404, OWNER_WITH_ID.description),
+    OwnerTestData(OWNER_WITH_FAULTY_ID.getOwner(),400, OWNER_WITH_FAULTY_ID.description)
 )
 
 val ownerGetByIdTestData = listOf(

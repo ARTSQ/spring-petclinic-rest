@@ -19,6 +19,7 @@ val petsAdditionToOwnerTestData= listOf(
     PetTestData(PET_WITH_SPACE_IN_NAME.getPet(), 201, PET_WITH_SPACE_IN_NAME.description),
     PetTestData(PET_WITH_NO_TYPE.getPet(), 400, PET_WITH_NO_TYPE.description),
     PetTestData(PET_WITH_EMPTY_NAME.getPet(), 400, PET_WITH_EMPTY_NAME.description),
+    PetTestData(PET_WITH_TOO_LONG_NAME.getPet(), 400, PET_WITH_TOO_LONG_NAME.description),
     PetTestData(PET_WITH_EMPTY_BIRTH_DATE.getPet(), 400, PET_WITH_EMPTY_BIRTH_DATE.description),
     PetTestData(PET_WITH_BIRTH_DATE_WRONG_FORMAT.getPet(), 400, PET_WITH_BIRTH_DATE_WRONG_FORMAT.description),
     PetTestData(PET_WITH_NEW_PET_TYPE.getPet(), 400, PET_WITH_NEW_PET_TYPE.description),

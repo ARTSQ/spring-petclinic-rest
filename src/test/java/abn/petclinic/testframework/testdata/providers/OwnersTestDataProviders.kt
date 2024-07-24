@@ -2,6 +2,7 @@ package abn.petclinic.testframework.testdata.providers
 
 import abn.petclinic.testframework.testdata.datasources.ownerCreationTestData
 import abn.petclinic.testframework.testdata.datasources.ownerDeletionTestData
+import abn.petclinic.testframework.testdata.datasources.ownerGetByIdTestData
 import abn.petclinic.testframework.testdata.datasources.ownerModificationTestData
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
@@ -23,5 +24,11 @@ class OwnersModificationTestDataProvider: ArgumentsProvider {
 class OwnersDeletionTestDataProvider: ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
         return ownerDeletionTestData.stream().map { Arguments.of(it, it.getDescription()) }
+    }
+}
+
+class OwnerGetByIdTestDataProvider: ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+        return ownerGetByIdTestData.stream().map { Arguments.of(it, it.getDescription()) }
     }
 }

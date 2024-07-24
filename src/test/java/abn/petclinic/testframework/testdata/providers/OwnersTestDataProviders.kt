@@ -11,24 +11,24 @@ import java.util.stream.Stream
 
 class OwnersCreationTestDataProvider: ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        return ownerCreationTestData.stream().map { Arguments.of(it, it.getDescription()) }
+        return ownerCreationTestData.stream().map { Arguments.of(it, it.getDescription(),it.getSeverityOfCase()) }
     }
 }
 
 class OwnersModificationTestDataProvider: ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        return ownerModificationTestData.stream().map { Arguments.of(it, it.getDescription()) }
+        return ownerModificationTestData.stream().map { Arguments.of(it, it.getDescription(),it.getSeverityOfCase()) }
     }
 }
 
 class OwnersDeletionTestDataProvider: ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        return ownerDeletionTestData.stream().map { Arguments.of(it, it.getDescription()) }
+        return ownerDeletionTestData.stream().map { Arguments.of(it, it.getDescription(),it.getSeverityOfCase()) }
     }
 }
 
 class OwnerGetByIdTestDataProvider: ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        return ownerGetByIdTestData.stream().map { Arguments.of(it, it.getDescription()) }
+        return ownerGetByIdTestData.stream().map { Arguments.of(it, it.getDescription(),it.getSeverityOfCase()) }
     }
 }

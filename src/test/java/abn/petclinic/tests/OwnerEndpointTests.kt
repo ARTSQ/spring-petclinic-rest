@@ -14,7 +14,12 @@ import abn.petclinic.testframework.testdata.enums.OwnerTestTemplates
 import abn.petclinic.testframework.testdata.providers.*
 import abn.petclinic.testframework.utils.allureStep
 import abn.petclinic.testframework.utils.extractOwnerId
+import abn.petclinic.testframework.utils.setSeverity
 import abn.petclinic.testframework.utils.validate
+import io.qameta.allure.Feature
+import io.qameta.allure.Severity
+import io.qameta.allure.SeverityLevel
+import io.qameta.allure.Story
 import io.restassured.RestAssured.*
 import io.restassured.http.ContentType
 import org.junit.jupiter.api.BeforeAll
@@ -39,9 +44,12 @@ class OwnerEndpointTests {
     }
 
     @ParameterizedTest(name = "{1}")
+    @Feature("Owner-level operations")
+    @Story("Add new owner")
     @ArgumentsSource(OwnersCreationTestDataProvider::class)
     @DisplayName("Owner creation test:")
-    fun createNewOwnerTest(testData: OwnerTestData, description: String ) {
+    fun createNewOwnerTest(testData: OwnerTestData, description: String, severity:SeverityLevel ) {
+        setSeverity(severity)
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val response  = createOwner(newOwner,expectedCode)
@@ -59,8 +67,12 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Add new owner")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Owner creation test: malformed JSON")
     fun createNewOwnerMalformedTest() {
+
         allureStep("First Step") {
             val response = given()
                 .contentType(ContentType.JSON)
@@ -84,6 +96,9 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Add new owner")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Owner creation test: absent field")
     fun createNewOwnerAbsentFieldTest() {
         val response = given()
@@ -105,9 +120,13 @@ class OwnerEndpointTests {
     }
 
     @ParameterizedTest(name = "{1}")
+    @Feature("Owner-level operations")
+    @Story("Modify owner")
     @ArgumentsSource(OwnersModificationTestDataProvider::class)
     @DisplayName("Owner update test:")
-    fun updateOwnerTest(testData: OwnerTestData, description: String ) {
+    fun updateOwnerTest(testData: OwnerTestData, description: String, severity:SeverityLevel ) {
+        setSeverity(severity)
+
         val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
         val updatedOwner = testData.ownerData
         val expectedOwner =  testData.ownerData
@@ -132,6 +151,9 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Modify owner")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Owner update: malformed JSON")
     fun updateOwnerMalformedTest() {
         val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
@@ -158,6 +180,9 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Modify owner")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Owner update: absent field")
     fun updateOwnerAbsentFieldTest() {
         val originalOwnerData = OwnerTestTemplates.BASIC_OWNER2.getOwner()
@@ -183,7 +208,9 @@ class OwnerEndpointTests {
         assertEquals(400, response.statusCode)
     }
 
-    @Test
+    @Test@Feature("Owner-level operations")
+    @Story("Get owners list")
+    @Severity(SeverityLevel.BLOCKER)
     @DisplayName("Get full owners list")
     fun getOwnersListTest() {
         val newOwner = OwnerTestTemplates.BASIC_OWNER2.getOwner()
@@ -198,6 +225,9 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Get owners list")
+    @Severity(SeverityLevel.MINOR)
     @DisplayName("Get full owners list when no owners registered")
     @Disabled("This test is disabled: deeper framework integration required")
     fun getFullOwnersListTestUponEmpty() {
@@ -205,6 +235,8 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Get owners list")
     @DisplayName("Get owners list by last name")
     fun getOwnersListByLastNameTest() {
         val newOwner1 = OwnerTestTemplates.BASIC_OWNER.getOwner()
@@ -222,6 +254,9 @@ class OwnerEndpointTests {
     }
 
     @Test
+    @Feature("Owner-level operations")
+    @Story("Get owners list")
+    @Severity(SeverityLevel.NORMAL)
     @DisplayName("Get full owners list: last name not existing")
     fun getOwnersListByLastNameNegativeTest(){
         createOwner(OwnerTestTemplates.BASIC_OWNER.getOwner(),201)
@@ -229,9 +264,13 @@ class OwnerEndpointTests {
     }
 
     @ParameterizedTest(name = "{1}")
+    @Feature("Owner-level operations")
+    @Story("Delete owner")
     @ArgumentsSource(OwnersDeletionTestDataProvider::class)
     @DisplayName("Owner update test:")
-    fun ownerDeletionTest(testData: OwnerTestData, description: String){
+    fun ownerDeletionTest(testData: OwnerTestData, description: String, severity:SeverityLevel){
+        setSeverity(severity)
+
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val creationResponse = createOwner(newOwner,201)
@@ -245,9 +284,13 @@ class OwnerEndpointTests {
     }
 
     @ParameterizedTest(name = "{1}")
+    @Feature("Owner-level operations")
+    @Story("Delete owner")
     @ArgumentsSource(OwnerGetByIdTestDataProvider::class)
     @DisplayName("Owner deletion test:")
-    fun ownerGetByIdTest(testData: OwnerTestData, description: String){
+    fun ownerGetByIdTest(testData: OwnerTestData, description: String, severity:SeverityLevel){
+        setSeverity(severity)
+
         val newOwner = testData.ownerData
         val expectedCode = testData.expectedResponseCode
         val creationResponse = createOwner(newOwner,201)
@@ -261,9 +304,12 @@ class OwnerEndpointTests {
     }
 
     @ParameterizedTest(name = "{1}")
+    @Feature("Pet-level operations")
+    @Story("Add new pet")
     @ArgumentsSource(AdditionToOwnerTestDataProvider::class)
     @DisplayName("Add pet to owner test:")
-    fun addPetToOwnerTest(testData: PetTestData, description: String){
+    fun addPetToOwnerTest(testData: PetTestData, description: String, severity:SeverityLevel){
+        setSeverity(severity)
         val addedPet = testData.petData
         val newOwner = OwnerTestTemplates.BASIC_OWNER.getOwner()
         val expectedCode = testData.expectedResponseCode

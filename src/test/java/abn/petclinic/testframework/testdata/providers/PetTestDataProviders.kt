@@ -8,6 +8,6 @@ import java.util.stream.Stream
 
 class AdditionToOwnerTestDataProvider: ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
-        return petsAdditionToOwnerTestData.stream().map { Arguments.of(it, it.getDescription()) }
+        return petsAdditionToOwnerTestData.stream().map { Arguments.of(it, it.getDescription(), it.getSeverityOfCase()) }
     }
 }

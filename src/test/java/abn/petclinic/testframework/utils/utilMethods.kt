@@ -4,6 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.qameta.allure.Allure
+import io.qameta.allure.Allure.getLifecycle
+import io.qameta.allure.SeverityLevel
+import io.qameta.allure.model.Label
+import io.qameta.allure.model.StatusDetails
 import io.restassured.response.Response
 import kotlin.test.assertNotNull
 
@@ -40,4 +44,13 @@ fun allureStep(name: String, action: () -> Unit = {}) {
         action()
         null
     })
+}
+
+fun setSeverity(level: SeverityLevel) {
+    getLifecycle().updateTestCase { testCase ->
+        testCase.labels.add(Label().apply {
+            name = "severity"
+            value = level.value()
+        })
+    }
 }

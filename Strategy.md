@@ -276,4 +276,66 @@ Fallback on custom implementations |
 This detailed planning phase will help ensure that the test automation strategy for the Petclinic application is executed smoothly, with clear milestones, resource allocation, risk management, and communication plans in place.
 
 
+### 3. Execution Phase
 
+**Objective:** Define the detailed steps and guidelines for executing the test automation strategy, ensuring smooth and effective implementation.
+
+#### 3.1 Preparation
+
+-   **Setup Test Environment:**
+    
+    -   Ensure that the test environment is configured to match the production environment as closely as possible.
+    -   Install and configure necessary tools and frameworks (e.g., JUnit, RestAssured, Maven, Allure Reporting).
+
+-   **Data Preparation:**
+    
+    -   Prepare test data required for executing the automated tests.
+    -   Ensure data consistency and relevance to the test cases.
+
+#### 3.2 Test Execution
+
+-   **Execution of Test Scripts:**
+    
+    -   Execute the automated test scripts as per the test plan.
+    -   Monitor the test execution process to ensure that it is proceeding as expected.
+-   **Logging and Reporting:**
+    
+    -   Utilize Allure Reporting to generate detailed reports of the test execution.
+    -   Log any issues or defects identified during the test execution.
+-   **Continuous Integration (CI):**
+    
+    -   Integrate the test execution with GitHub Actions to enable continuous testing.
+    -   Ensure that tests are automatically triggered on code commits or pull requests.
+
+#### 3.3 Monitoring and Control
+
+-   **Test Execution Monitoring:**
+    
+    -   Continuously monitor the test execution process for any deviations or issues.
+    -   Ensure timely resolution of any blockers or impediments.
+-   **Quality Metrics Tracking:**
+    
+    -   Track the quality metrics defined in the Quality Assurance Plan (e.g., Test Coverage, Defect Detection Rate).
+    -   Regularly review the metrics to ensure that they meet the target values.
+
+#### 3.4 Issue Management
+
+-   **Defect Logging and Tracking:**
+    
+    -   Log any defects identified during the test execution in a defect tracking tool.
+    -   Prioritize and assign defects for resolution.
+-   **Retesting and Regression Testing:**
+    
+    -   Retest the resolved defects to ensure that they are fixed.
+    -   Perform regression testing to ensure that recent changes have not introduced new defects.
+
+#### 3.5 Post-Execution Review
+
+-   **Test Execution Review:**
+    
+    -   Conduct a review meeting to discuss the outcomes of the test execution phase.
+    -   Document the lessons learned and any areas for improvement.
+-   **Reporting:**
+    
+    -   Generate a comprehensive test execution report summarizing the findings, defects, and overall test coverage.
+    -   Share the report with the relevant stakeholders.

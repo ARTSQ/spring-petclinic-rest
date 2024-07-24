@@ -280,6 +280,27 @@ class OwnerEndpointTests {
         }
     }
 
+    @Test
+    @DisplayName("Get owner's pet by ID")
+    @Disabled("This test is not yet implemented")
+    fun getOwnerPetByIDTest(){
+        //TODO: Add test
+    }
+
+    @Test
+    @DisplayName("Update pet's details")
+    @Disabled("This test is not yet implemented")
+    fun updatePetDetailTest(){
+        //TODO: Add test
+    }
+
+    @Test
+    @DisplayName("Add new visit for owner's pet")
+    @Disabled("This test is not yet implemented")
+    fun addNewVisitForOwnerTest(){
+        //TODO: Add test
+    }
+
 
 
 
